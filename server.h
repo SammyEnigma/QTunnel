@@ -15,11 +15,14 @@ signals:
 private slots:
     void onNewConnection();
     void onReadyRead();
+    void onBytesWritten();
 
 private:
     QTcpServer *server;
     QHostAddress destinationAddress;
     int destinationPort;
+
+    void trasferBlock(QTcpSocket *source, QTcpSocket *destination);
 };
 
 #endif // SERVER_H

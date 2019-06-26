@@ -39,15 +39,27 @@ void Server::onNewConnection()
     connect(destination, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 
     // When bytes have been written, we want to check if there are any more bytes and send them as well.
-    connect(source, SIGNAL(bytesWritten(qint64)), this, SLOT(onReadyRead()));
-    connect(destination, SIGNAL(bytesWritten(qint64)), this, SLOT(onReadyRead()));
+    connect(source, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
+    connect(destination, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
 }
 
 void Server::onReadyRead()
 {
     QTcpSocket *source = (QTcpSocket*) sender();
     QTcpSocket *destination = (QTcpSocket*) source->property("peer").value<void*>();
+    trasferBlock(source, destination);
+}
 
+void Server::onBytesWritten()
+{
+    QTcpSocket *destination = (QTcpSocket*) sender();
+    QTcpSocket *source = (QTcpSocket*) destination->property("peer").value<void*>();
+    trasferBlock(source, destination);
+}
+
+void Server::trasferBlock(QTcpSocket *source, QTcpSocket *destination)
+{
+    // Transfer up to 64KB. We don't want to overwhelm the buffers for the destination device.
     char buffer[64*1024];
     int n = source->read(buffer, 64*1024);
     if (n > 0) {

@@ -10,10 +10,6 @@ Server::Server(QObject *parent) : QObject(parent)
     {
         qDebug() << "Server could not start";
     }
-    else
-    {
-        qDebug() << "Server started!";
-    }
 }
 
 void Server::onNewConnection()

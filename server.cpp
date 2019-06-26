@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include <QPointer>
 #include <QTcpSocket>
 
 Server::Server(QObject *parent, const QHostAddress &sourceAddress, int sourcePort, const QHostAddress &destinationAddress, int destinationPort) : QObject(parent)
@@ -22,8 +23,8 @@ void Server::onNewConnection()
     QTcpSocket *destination = new QTcpSocket(this);
 
     // Use a "peer" property so the source/destination can find each other.
-    source->setProperty("peer", QVariant::fromValue((void*) destination));
-    destination->setProperty("peer", QVariant::fromValue((void*) source));
+    source->setProperty("peer", QVariant::fromValue(QPointer<QTcpSocket>(destination)));
+    destination->setProperty("peer", QVariant::fromValue(QPointer<QTcpSocket>(source)));
 
     // Connect the destination.
     destination->connectToHost(destinationAddress, destinationPort);
@@ -46,15 +47,19 @@ void Server::onNewConnection()
 void Server::onReadyRead()
 {
     QTcpSocket *source = (QTcpSocket*) sender();
-    QTcpSocket *destination = (QTcpSocket*) source->property("peer").value<void*>();
-    trasferBlock(source, destination);
+    QTcpSocket *destination = (QTcpSocket*) source->property("peer").value<QPointer<QTcpSocket> >();
+    if (destination) {
+        trasferBlock(source, destination);
+    }
 }
 
 void Server::onBytesWritten()
 {
     QTcpSocket *destination = (QTcpSocket*) sender();
-    QTcpSocket *source = (QTcpSocket*) destination->property("peer").value<void*>();
-    trasferBlock(source, destination);
+    QTcpSocket *source = (QTcpSocket*) destination->property("peer").value<QPointer<QTcpSocket> >();
+    if (source) {
+        trasferBlock(source, destination);
+    }
 }
 
 void Server::trasferBlock(QTcpSocket *source, QTcpSocket *destination)

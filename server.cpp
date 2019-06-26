@@ -6,6 +6,8 @@ Server::Server(QObject *parent, const QHostAddress &sourceAddress, int sourcePor
 {
     this->destinationAddress = destinationAddress;
     this->destinationPort = destinationPort;
+
+    // Start listening for connections.
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
     if(!server->listen(sourceAddress, sourcePort))
@@ -32,9 +34,11 @@ void Server::onNewConnection()
     connect(destination, SIGNAL(disconnected()), source, SLOT(deleteLater()));
     connect(destination, SIGNAL(disconnected()), destination, SLOT(deleteLater()));
 
+    // Connect the signals when something new is available for reading.
     connect(source, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(destination, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 
+    // When bytes have been written, we want to check if there are any more bytes and send them as well.
     connect(source, SIGNAL(bytesWritten(qint64)), this, SLOT(onReadyRead()));
     connect(destination, SIGNAL(bytesWritten(qint64)), this, SLOT(onReadyRead()));
 }

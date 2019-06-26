@@ -2,11 +2,13 @@
 
 #include <QTcpSocket>
 
-Server::Server(QObject *parent) : QObject(parent)
+Server::Server(QObject *parent, const QHostAddress &sourceAddress, int sourcePort, const QHostAddress &destinationAddress, int destinationPort) : QObject(parent)
 {
+    this->destinationAddress = destinationAddress;
+    this->destinationPort = destinationPort;
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
-    if(!server->listen(QHostAddress::Any, 1111))
+    if(!server->listen(sourceAddress, sourcePort))
     {
         qDebug() << "Server could not start";
     }
@@ -22,7 +24,7 @@ void Server::onNewConnection()
     destination->setProperty("peer", QVariant::fromValue((void*) source));
 
     // Connect the destination.
-    destination->connectToHost(QHostAddress::LocalHost, 2222);
+    destination->connectToHost(destinationAddress, destinationPort);
 
     // If one of the socket is disconnected, delete both.
     connect(source, SIGNAL(disconnected()), source, SLOT(deleteLater()));

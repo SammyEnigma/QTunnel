@@ -8,7 +8,7 @@ class Server : public QObject
 {
     Q_OBJECT
 public:
-    explicit Server(QObject *parent = 0);
+    explicit Server(QObject *parent, const QHostAddress &sourceAddress, int sourcePort, const QHostAddress &destinationAddress, int destinationPort);
 
 signals:
 
@@ -18,6 +18,8 @@ private slots:
 
 private:
     QTcpServer *server;
+    QHostAddress destinationAddress;
+    int destinationPort;
 };
 
 #endif // SERVER_H

@@ -27,7 +27,7 @@ Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinat
 
 Tunnel::~Tunnel()
 {
-    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4, data transferred: %5.").arg(source->peerAddress().toString()).arg(source->peerPort()).arg(destination->peerAddress().toString()).arg(destination->peerPort()).arg(totalTransferred).toUtf8().constData());
+    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4, data transferred: %5.").arg(source->peerAddress().toString()).arg(source->peerPort()).arg(destination->peerName()).arg(destination->peerPort()).arg(totalTransferred).toUtf8().constData());
 }
 
 void Tunnel::onReadyRead()

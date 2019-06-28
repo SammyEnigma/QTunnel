@@ -1,4 +1,5 @@
 #include "tunnel.h"
+#include <QHostAddress>
 
 Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinationAddress, int destinationPort) : QObject(parent)
 {
@@ -21,6 +22,11 @@ Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinat
 
     // Connect the destination.
     destination->connectToHost(destinationAddress, destinationPort);
+}
+
+Tunnel::~Tunnel()
+{
+    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4.").arg(source->peerAddress().toString()).arg(source->peerPort()).arg(destination->peerAddress().toString()).arg(destination->peerPort()).toUtf8().constData());
 }
 
 void Tunnel::onReadyRead()

@@ -9,6 +9,7 @@ class Tunnel : public QObject
     Q_OBJECT
 public:
     explicit Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinationAddress, int destinationPort);
+    virtual ~Tunnel();
 
 signals:
 

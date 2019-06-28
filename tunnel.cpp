@@ -6,6 +6,7 @@ Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinat
     this->source = source;
     source->setParent(this);
     destination = new QTcpSocket(this);
+    totalTransferred = 0;
 
     // If one of the socket is disconnected, delete the tunnel
     // (the sockets are children so they will get deleted too).
@@ -26,7 +27,7 @@ Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinat
 
 Tunnel::~Tunnel()
 {
-    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4.").arg(source->peerAddress().toString()).arg(source->peerPort()).arg(destination->peerAddress().toString()).arg(destination->peerPort()).toUtf8().constData());
+    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4, data transferred: %5.").arg(source->peerAddress().toString()).arg(source->peerPort()).arg(destination->peerAddress().toString()).arg(destination->peerPort()).arg(totalTransferred).toUtf8().constData());
 }
 
 void Tunnel::onReadyRead()
@@ -55,6 +56,7 @@ void Tunnel::transferBlock(QTcpSocket *source, QTcpSocket *destination)
     if (n > 0) {
         destination->write(buffer, n);
     }
+    totalTransferred += n;
 }
 
 QTcpSocket *Tunnel::getPeer(QTcpSocket *socket)

@@ -30,6 +30,8 @@ Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinat
     this->destinationPort = destinationPort;
     this->sourceAddress = source->peerAddress().toString();
     this->sourcePort = source->peerPort();
+
+    qDebug(QString("Opening tunnel from %1:%2 to %3:%4.").arg(sourceAddress).arg(sourcePort).arg(this->destinationAddress).arg(destinationPort).toUtf8().constData());
 }
 
 Tunnel::~Tunnel()

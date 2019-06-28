@@ -23,11 +23,18 @@ Tunnel::Tunnel(QObject *parent, QTcpSocket *source, const QHostAddress &destinat
 
     // Connect the destination.
     destination->connectToHost(destinationAddress, destinationPort);
+
+    // We need to store those now because peerPort() at least doesn't work
+    // when the socket has already been disconnected.
+    this->destinationAddress = destinationAddress.toString();
+    this->destinationPort = destinationPort;
+    this->sourceAddress = source->peerAddress().toString();
+    this->sourcePort = source->peerPort();
 }
 
 Tunnel::~Tunnel()
 {
-    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4, data transferred: %5.").arg(source->peerAddress().toString()).arg(source->peerPort()).arg(destination->peerName()).arg(destination->peerPort()).arg(totalTransferred).toUtf8().constData());
+    qDebug(QString("Deleting tunnel from %1:%2 to %3:%4, data transferred: %5.").arg(sourceAddress).arg(sourcePort).arg(destinationAddress).arg(destinationPort).arg(totalTransferred).toUtf8().constData());
 }
 
 void Tunnel::onReadyRead()

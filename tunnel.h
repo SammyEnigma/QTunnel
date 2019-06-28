@@ -24,6 +24,11 @@ private:
     void transferBlock(QTcpSocket *source, QTcpSocket *destination);
     QTcpSocket *getPeer(QTcpSocket *socket);
     quint64 totalTransferred;
+
+    QString destinationAddress;
+    int destinationPort;
+    QString sourceAddress;
+    int sourcePort;
 };
 
 #endif // TUNNEL_H

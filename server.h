@@ -22,7 +22,7 @@ private:
     QHostAddress destinationAddress;
     int destinationPort;
 
-    void trasferBlock(QTcpSocket *source, QTcpSocket *destination);
+    void transferBlock(QTcpSocket *source, QTcpSocket *destination);
 };
 
 #endif // SERVER_H

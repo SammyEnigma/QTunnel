@@ -49,7 +49,7 @@ void Server::onReadyRead()
     QTcpSocket *source = (QTcpSocket*) sender();
     QTcpSocket *destination = (QTcpSocket*) source->property("peer").value<QPointer<QTcpSocket> >();
     if (destination) {
-        trasferBlock(source, destination);
+        transferBlock(source, destination);
     }
 }
 
@@ -58,11 +58,11 @@ void Server::onBytesWritten()
     QTcpSocket *destination = (QTcpSocket*) sender();
     QTcpSocket *source = (QTcpSocket*) destination->property("peer").value<QPointer<QTcpSocket> >();
     if (source) {
-        trasferBlock(source, destination);
+        transferBlock(source, destination);
     }
 }
 
-void Server::trasferBlock(QTcpSocket *source, QTcpSocket *destination)
+void Server::transferBlock(QTcpSocket *source, QTcpSocket *destination)
 {
     // Transfer up to 64KB. We don't want to overwhelm the buffers for the destination device.
     char buffer[64*1024];
